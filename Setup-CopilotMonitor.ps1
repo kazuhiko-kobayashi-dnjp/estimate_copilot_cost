@@ -83,26 +83,26 @@ if (-not $skipToken) {
 # 3. Proxy configuration
 # ------------------------------------------------------------------
 Write-Host "`n[3] Proxy configuration" -ForegroundColor Cyan
+$defaultProxy = "http://in-proxy-o.denso.co.jp:8080"
 $detectedProxy = ""
 if ($env:HTTPS_PROXY) { $detectedProxy = $env:HTTPS_PROXY }
 elseif ($env:HTTP_PROXY) { $detectedProxy = $env:HTTP_PROXY }
 
-$proxyUrl = ""
-if ($detectedProxy) {
-    Write-Host "  Detected proxy: $detectedProxy" -ForegroundColor DarkGray
-    $ans = Read-Host "  Use this proxy? [Y/n]"
-    if ($ans -match "^[Nn]") {
-        $proxyUrl = Read-Host "  Proxy URL (Enter to skip)"
-    } else {
-        $proxyUrl = $detectedProxy
-    }
-} else {
-    $proxyUrl = Read-Host "  Proxy URL (Enter to skip if none)"
-}
-if ($proxyUrl) {
+# 環境変数で検出できた場合はそれを使用、なければ社内デフォルト
+$candidateProxy = if ($detectedProxy) { $detectedProxy } else { $defaultProxy }
+
+Write-Host "  Default proxy: $candidateProxy" -ForegroundColor DarkGray
+$ans = Read-Host "  このプロキシを使用しますか？変更する場合は新しいURLを入力、不要なら 'none' と入力 [Enter=使用]"
+
+if ($ans -eq "none") {
+    $proxyUrl = ""
+    Write-Host "  [OK] No proxy (direct connection)" -ForegroundColor Green
+} elseif ($ans -ne "") {
+    $proxyUrl = $ans
     Write-Host "  [OK] Proxy: $proxyUrl" -ForegroundColor Green
 } else {
-    Write-Host "  [OK] No proxy (direct connection)" -ForegroundColor Green
+    $proxyUrl = $candidateProxy
+    Write-Host "  [OK] Proxy: $proxyUrl" -ForegroundColor Green
 }
 
 # ------------------------------------------------------------------
