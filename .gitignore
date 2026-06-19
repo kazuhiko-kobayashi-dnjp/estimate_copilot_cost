@@ -1,0 +1,16 @@
+﻿# Sensitive / personal data
+*.sec
+*.csv
+*.xlsx
+config.json
+
+# Auto-generated files (created by Setup-CopilotMonitor.ps1)
+Get-CopilotQuota.ps1
+
+# JSON data files (usage metrics, seats, quota snapshots)
+*.json
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.tmp
